@@ -1,0 +1,16 @@
+{
+    "name": "phidias/calendar.api",
+    "description": "Calendar and event management API",
+    "license": "GPL-3.0",
+
+    "autoload": {
+        "psr-4": {
+            "Phidias\\": "src/"
+        }
+    },
+
+    "require": {
+        "phidias/api": "*",
+        "phidias/db": "*"
+    }
+}
