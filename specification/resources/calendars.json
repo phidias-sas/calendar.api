@@ -1,0 +1,91 @@
+{
+    "path": "/calendars",
+
+    "methods": {
+
+        "get": {
+
+            "title": "Obtener una lista de calendarios",
+
+            "parameters": {
+
+                "limit": {
+                    "$description": "limita la respuesta a este numero de calendarios",
+                    "$type": "integer",
+                    "$min":  1
+                },
+
+                "page": {
+                    "$description": "pagina de resultados a mostrar",
+                    "$type": "integer",
+                    "$min":  1
+                },
+
+                "order": {
+                    "$description": "listado separado por comas de columnas a ordenar",
+                    "$type":        "string",
+                    "$pattern":     "([+-]?[a-z]+)(,[+-]?[a-z]+)*"
+                },
+
+                "fields": {
+                    "$description": "listado separado por comas de campos a traer de cada objeto calendario",
+                    "$type":        "string",
+                    "$pattern":     "([a-z]+)(,[a-z]+)*"
+                },
+
+                "q": {
+                    "$description": "criterios de busqueda",
+                    "$type":        "string"
+                }
+
+            },
+
+            "response": {
+                "code": 200,
+                "body": {
+                    "$type": "array",
+                    "$items": {"$ref": "/entities/calendar.json"}
+                }
+            }
+
+        },
+
+
+        "post": {
+
+            "title": "Crear un calendario",
+
+            "request": {
+                "headers": {
+                    "Content-Type": "application/json"
+                },
+
+                "body": {"$ref": "/entities/calendar.json"}
+            },
+
+            "response": [
+
+                {
+                    "code": 201,
+
+                    "headers": {
+                        "Location": {"$type": "string"}
+                    },
+
+                    "body": {
+                        "$ref": "/entities/calendar.json",
+                        "id": {"$required": true}
+                    }
+                },
+
+                {
+                    "code": 422,
+                    "$description": "Error validando los datos del request"
+                }
+
+            ]
+
+        }
+
+    }
+}

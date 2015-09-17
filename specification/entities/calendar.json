@@ -1,0 +1,42 @@
+{
+    "$title": "Calendario",
+    "$description": "Esta entidad representa un objeto calendario basico",
+
+    "id": {
+        "$title": "Identificador unico del calendario",
+        "$type":  "string"
+    },
+
+    "name": {
+        "$title":    "Nombre del calendario",
+        "$type":     "string",
+        "$pattern":  ".+",
+        "$required": true
+    },
+
+    "description": {
+        "$title": "Descripcion del calendario",
+        "$type":  "string"
+    },
+
+    "creationDate": {
+        "$title": "Fecha en la que el calendario fue creado",
+        "$type":  "date"
+    },
+
+    "timezone": {
+        "$title": "Zona horaria predeterminada para eventos del calendario",
+        "$type":  "string"
+    },
+
+    "location": {
+        "$title": "Ubicacion predeterminada para eventos del calendario",
+        "$type":  "string"
+    },
+
+    "color": {
+        "$title":   "Color del calendario",
+        "$type":    "string",
+        "$pattern": "#[a-z0-9]{3,6}"
+    }
+}

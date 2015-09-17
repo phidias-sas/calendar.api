@@ -1,3 +1,9 @@
 {
-    "title": "Calendario"
+    "title": "Modulo de calendarios",
+    "description": "API para gestionar calendarios y eventos",
+
+    "resources": [
+        {"$ref": "resources/calendars.json"},
+        {"$ref": "resources/calendars/calendarId.json"}
+    ]
 }
