@@ -1,0 +1,19 @@
+{
+    "path": "/events",
+
+    "methods": {
+
+        "get": {
+
+            "response": {
+                "code": 200,
+                "body": {
+                    "$type": "array",
+                    "$items": {"$ref": "/entities/event.json"}
+                }
+            }
+
+        }
+
+    }
+}

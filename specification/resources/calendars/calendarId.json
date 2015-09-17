@@ -8,6 +8,11 @@
         }
     },
 
+    "resources": [
+        {"$ref": "/resources/calendars/calendarId/events.json"}
+    ],
+
+
     "methods": {
 
         "any": {

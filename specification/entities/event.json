@@ -1,0 +1,51 @@
+{
+    "id": {
+        "$title": "Identificador global unico del evento",
+        "$type":  "string"
+    },
+
+    "title": {
+        "$title":    "Titulo del evento",
+        "$type":     "string",
+        "$required": true
+    },
+
+    "description": {
+        "$title": "Description del evento",
+        "$type":  "string"
+    },
+
+    "startDate": {
+        "$title":    "Fecha inicial",
+        "$type":     "date",
+        "$required": true
+    },
+
+    "endDate": {
+        "$title":    "Fecha inicial",
+        "$type":     "date"
+    },
+
+    "timezone": {
+        "$title": "Zona horaria predeterminada para eventos del calendario",
+        "$type":  "string"
+    },
+
+    "location": {
+        "$title": "Ubicacion predeterminada para eventos del calendario",
+        "$type":  "string"
+    },
+
+    "repeats": {"$ref": "/entities/repetition.json"},
+
+    "creationDate": {
+        "$title":    "Fecha de creacion del evento",
+        "$type":     "date"
+    },
+
+    "modificationDate": {
+        "$title":    "Fecha de ultima modificacion del evento",
+        "$type":     "date"
+    }
+
+}
