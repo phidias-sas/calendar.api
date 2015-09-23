@@ -33,7 +33,7 @@ class Entity extends \Phidias\Db\Orm\Entity
 
             "color" => [
                 "type"       => "integer",
-                "unsigned"   => true
+                "unsigned"   => true,
                 "length"     => 6,
                 "acceptNull" => true,
                 "default"    => null
