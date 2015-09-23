@@ -7,7 +7,7 @@
         "$type":  "string"
     },
 
-    "name": {
+    "title": {
         "$title":    "Nombre del calendario",
         "$type":     "string",
         "$pattern":  ".+",
@@ -22,16 +22,6 @@
     "creationDate": {
         "$title": "Fecha en la que el calendario fue creado",
         "$type":  "date"
-    },
-
-    "timezone": {
-        "$title": "Zona horaria predeterminada para eventos del calendario",
-        "$type":  "string"
-    },
-
-    "location": {
-        "$title": "Ubicacion predeterminada para eventos del calendario",
-        "$type":  "string"
     },
 
     "color": {

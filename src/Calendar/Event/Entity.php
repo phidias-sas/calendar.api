@@ -1,17 +1,20 @@
 <?php
-namespace Phidias\Calendar;
+namespace Phidias\Calendar\Event;
 
 class Entity extends \Phidias\Db\Orm\Entity
 {
     var $id;
     var $title;
     var $description;
-    var $color;
+    var $location;
+    var $startDate;
+    var $endDate;
     var $creationDate;
+    var $modificationDate;
 
     protected static $schema = [
 
-        "table" => "calendars",
+        "table" => "events",
         "keys"  => ["id"],
 
         "attributes" => [
@@ -29,12 +32,23 @@ class Entity extends \Phidias\Db\Orm\Entity
                 "type"       => "text",
                 "acceptNull" => true,
                 "default"    => null
-            ]
+            ],
 
-            "color" => [
+            "location" => [
+                "type"       => "varchar",
+                "length"     => 255,
+                "acceptNull" => true,
+                "default"    => null
+            ],
+
+            "startDate" => [
+                "type"     => "integer",
+                "unsigned" => true
+            ],
+
+            "endDate" => [
                 "type"       => "integer",
-                "unsigned"   => true
-                "length"     => 6,
+                "unsigned"   => true,
                 "acceptNull" => true,
                 "default"    => null
             ],
@@ -42,6 +56,13 @@ class Entity extends \Phidias\Db\Orm\Entity
             "creationDate" => [
                 "type"     => "integer",
                 "unsigned" => true
+            ],
+
+            "modificationDate" => [
+                "type"       => "integer",
+                "unsigned"   => true,
+                "acceptNull" => true,
+                "default"    => null
             ]
 
         ]

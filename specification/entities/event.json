@@ -26,11 +26,6 @@
         "$type":     "date"
     },
 
-    "timezone": {
-        "$title": "Zona horaria predeterminada para eventos del calendario",
-        "$type":  "string"
-    },
-
     "location": {
         "$title": "Ubicacion predeterminada para eventos del calendario",
         "$type":  "string"
@@ -47,5 +42,4 @@
         "$title":    "Fecha de ultima modificacion del evento",
         "$type":     "date"
     }
-
 }
