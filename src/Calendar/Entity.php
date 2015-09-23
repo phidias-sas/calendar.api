@@ -29,7 +29,7 @@ class Entity extends \Phidias\Db\Orm\Entity
                 "type"       => "text",
                 "acceptNull" => true,
                 "default"    => null
-            ]
+            ],
 
             "color" => [
                 "type"       => "integer",
