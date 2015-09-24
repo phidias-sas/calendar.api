@@ -47,10 +47,6 @@
                 $response->status(201, "calendario creado");
                 $response->header("Location", "/calendars/{$calendar->id}");
             }
-        ],
-
-        "put" => [
-            "controller" => "Phidias\Calendar\Controller->createBulk()"
         ]
 
     ]
