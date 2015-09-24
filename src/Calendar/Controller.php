@@ -11,10 +11,7 @@ class Controller
 {
     function getCollection()
     {
-        return Calendar::collection()
-            ->allAttributes()
-            ->find()
-            ->fetchAll();
+        return Calendar::collection()->allAttributes();
     }
 
     function createCalendar($incomingCalendar)
