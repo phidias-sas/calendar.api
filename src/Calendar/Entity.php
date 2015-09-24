@@ -6,8 +6,8 @@ class Entity extends \Phidias\Db\Orm\Entity
     var $id;
     var $title;
     var $description;
-    var $color;
     var $creationDate;
+    var $color;
 
     protected static $schema = [
 
@@ -32,8 +32,7 @@ class Entity extends \Phidias\Db\Orm\Entity
             ],
 
             "color" => [
-                "type"       => "integer",
-                "unsigned"   => true,
+                "type"       => "varchar",
                 "length"     => 6,
                 "acceptNull" => true,
                 "default"    => null
