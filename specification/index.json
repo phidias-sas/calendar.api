@@ -3,7 +3,6 @@
     "description": "API para gestionar calendarios y eventos",
 
     "resources": [
-        {"$ref": "resources/calendars.json"},
-        {"$ref": "resources/calendars/calendarId.json"}
+        {"$ref": "resources/calendar/events.json"}
     ]
 }

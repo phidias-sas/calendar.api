@@ -4,6 +4,11 @@
         "$type":  "string"
     },
 
+    "type": {
+        "$title": "Tipo de evento",
+        "$type":  "string"
+    },
+
     "title": {
         "$title":    "Titulo del evento",
         "$type":     "string",
@@ -22,8 +27,8 @@
     },
 
     "endDate": {
-        "$title":    "Fecha inicial",
-        "$type":     "date"
+        "$title": "Fecha inicial",
+        "$type":  "date"
     },
 
     "location": {
@@ -34,12 +39,12 @@
     "repeats": {"$ref": "/entities/repetition.json"},
 
     "creationDate": {
-        "$title":    "Fecha de creacion del evento",
-        "$type":     "date"
+        "$title": "Fecha de creacion del evento",
+        "$type":  "date"
     },
 
     "modificationDate": {
-        "$title":    "Fecha de ultima modificacion del evento",
-        "$type":     "date"
+        "$title": "Fecha de ultima modificacion del evento",
+        "$type":  "date"
     }
 }
