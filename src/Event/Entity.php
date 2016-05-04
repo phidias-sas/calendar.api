@@ -5,7 +5,6 @@ class Entity extends \Phidias\Db\Orm\Entity
 {
     var $id;
     var $title;
-    var $description;
     var $location;
     var $startDate;
     var $endDate;
@@ -26,12 +25,6 @@ class Entity extends \Phidias\Db\Orm\Entity
             "title" => [
                 "type"   => "varchar",
                 "length" => 255
-            ],
-
-            "description" => [
-                "type"       => "text",
-                "acceptNull" => true,
-                "default"    => null
             ],
 
             "location" => [

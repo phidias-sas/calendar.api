@@ -28,7 +28,13 @@ class Controller
     {
         $event = new Event($eventId);
         $event->setValues($eventData);
+        $event->creationDate     = !$eventId ? time(): $event->creationDate;
+        $event->modificationDate = time();
         $event->save();
+
+        if (isset($eventData->repeats)) {
+            RepetitionController::repeat($event, $eventData->repeats);
+        }
 
         return $event;
     }

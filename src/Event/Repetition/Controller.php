@@ -6,7 +6,7 @@ use Phidias\Calendar\Event\Repetition\Entity as Repetition;
 
 class Controller
 {
-    private function sanitizeRepetitionData($repetitionData)
+    private static function sanitizeRepetitionData($repetitionData)
     {
         if (!is_object($repetitionData) || !isset($repetitionData->every) || !$repetitionData->every) {
             return null;
@@ -74,19 +74,17 @@ class Controller
         }
     }
 
-    public function save($eventId, $repetitionData)
+    public static function repeat($event, $repetitionData)
     {
         //Clear all existing repetition data for this event
         Repetition::collection()
-            ->match("event", $eventId)
+            ->match("event", $event->id)
             ->delete();
 
-        $repetitionData = $this->sanitizeRepetitionData($repetitionData);
+        $repetitionData = self::sanitizeRepetitionData($repetitionData);
         if (!$repetitionData) {
             return;
         }
-
-        $event = new Event($eventId);
 
         $repetitionCollection = Repetition::collection()->allAttributes();
 
@@ -115,13 +113,13 @@ class Controller
         $repetition->count         = $repetitionData->count;
         $repetition->until         = $repetitionData->until;
 
-        $repetition->day           = date('j', $event->start);
-        $repetition->month         = date('n', $event->start);
-        $repetition->year          = date('Y', $event->start);
-        $repetition->weekDay       = date('N', $event->start);
+        $repetition->day           = date('j', $event->startDate);
+        $repetition->month         = date('n', $event->startDate);
+        $repetition->year          = date('Y', $event->startDate);
+        $repetition->weekDay       = date('N', $event->startDate);
         $repetition->weekDayN      = ceil($repetition->day/7);
-        $repetition->weekDayIsLast = $repetition->day + 7 > date('t', $event->start);
-        $repetition->seqDay        = ceil($event->start / 86400);
+        $repetition->weekDayIsLast = $repetition->day + 7 > date('t', $event->startDate);
+        $repetition->seqDay        = ceil($event->startDate / 86400);
         $repetition->seqMonth      = $repetition->month + ($repetition->year - 1970)*12;
 
         $repetitionCollection->add($repetition);
@@ -143,7 +141,7 @@ class Controller
 
                 $dayRepetition = clone($repetition);
 
-                $dayDate = $event->start + ($weekDay - $repetition->weekDay)*86400;
+                $dayDate = $event->startDate + ($weekDay - $repetition->weekDay)*86400;
 
                 $dayRepetition->day           = date('d', $dayDate);
                 $dayRepetition->month         = date('n', $dayDate);
@@ -172,12 +170,11 @@ class Controller
             $endDate = $startDate;
         }
 
-
         //First, condition the query to return only events that ocurr in the specified date range
         $conditions = array();
 
         //non repeating events ocurring within the date range
-        $conditions[] = "(repetition.frequency IS NULL AND start >= $startDate AND (end IS NULL OR end <= $endDate))";
+        $conditions[] = "(repetition.frequency IS NULL AND startDate >= $startDate AND (endDate IS NULL OR endDate <= $endDate))";
 
         //Repetition conditions for each day in the date range
         for ($date = $startDate; $date <= $endDate; $date = $date + 86400) {
@@ -220,7 +217,7 @@ class Controller
 
             for ($date = $startDate; $date <= $endDate; $date = $date + 86400) {
 
-                $eventDay = mktime(0, 0, 0, date("m", $event->start), date("d", $event->start), date("Y", $event->start));
+                $eventDay = mktime(0, 0, 0, date("m", $event->startDate), date("d", $event->startDate), date("Y", $event->startDate));
                 if ($eventDay > $date) {
                     continue;
                 }
@@ -245,7 +242,7 @@ class Controller
                     ) {
 
                         $childEvent = clone($event);
-                        $childEvent->start = mktime(date('h', $event->start), date('i', $event->start), date('s', $event->start), date('m', $date), date('d', $date), date('y', $date));
+                        $childEvent->start = mktime(date('h', $event->startDate), date('i', $event->startDate), date('s', $event->startDate), date('m', $date), date('d', $date), date('y', $date));
                         unset($childEvent->occurrences);
                         unset($childEvent->repetition);
 
@@ -254,7 +251,6 @@ class Controller
                 }
 
             }
-
 
         });
 
