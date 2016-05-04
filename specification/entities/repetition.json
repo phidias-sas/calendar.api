@@ -1,0 +1,41 @@
+{
+    "every": {
+        "$title": "Identificador global unico del evento",
+        "$type":  "string",
+        "$any":   ["day", "week", "month", "year"]
+    },
+
+    "on": {
+        "$type":  "string"
+    },
+
+    "interval": {
+        "$type":  "integer"
+    },
+
+    "count": {
+        "$type":  "integer"
+    },
+
+    "until": {
+        "$title": "Fecha de la ultima iteracion",
+        "$type":  "date"
+    },
+
+    "$any": [
+        {
+            "every": "month",
+            "on": {
+                "$any": ["weekday", "day"]
+            }
+        },
+
+        {
+            "every": "week",
+            "on": {
+                "$title": "Lista separada por comas de dias de la semana",
+                "$type": "string"
+            }
+        }
+    ]
+}

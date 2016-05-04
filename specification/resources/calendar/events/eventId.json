@@ -1,0 +1,92 @@
+{
+    "url": "{eventId}",
+    "title": "Evento",
+    "description": "Este recurso representa un evento identificado por eventId",
+
+    "attributes": {
+        "eventId": {
+            "title": "ID del evento",
+            "$type": "uuid"
+        }
+    },
+
+    "exchanges": [
+
+        {
+            "title": "Evento no encontrado",
+            "response": {
+                "title": "Evento no encontrado",
+                "code": 404
+            }
+        },
+
+        {
+            "title": "Obtener los detalles del evento",
+
+            "request": {
+                "method": "get"
+            },
+
+            "response": {
+                "$any": [
+                    {
+                        "title": "Detalles del evento",
+                        "code": 200,
+                        "body": {"$ref": "/entities/event.json"}
+                    }
+                ]
+            }
+        },
+
+
+        {
+            "title": "Eliminar el evento",
+
+            "request": {
+                "method": "delete"
+            },
+
+            "response": {
+                "$any": [
+                    {
+                        "description": "El cuerpo de la respuesta contiene todos los datos del evento que se acaba de eliminar",
+                        "code": 200,
+                        "headers": {
+                            "content-type": "application/json"
+                        },
+                        "body": {"$ref": "/entities/event.json"}
+                    }
+                ]
+            }
+        },
+
+
+        {
+            "title": "Modificar el evento",
+
+            "request": {
+                "method": {"$any": ["put", "patch"]},
+                "body": {"$ref": "/entities/event.json"}
+            },
+
+            "response": {
+
+                "$any": [
+                    {
+                        "code": 200,
+                        "headers": {
+                            "content-type": "application/json"
+                        },
+                        "body": {"$ref": "/entities/event.json"}
+                    },
+
+                    {
+                        "title": "Error de validacion de datos",
+                        "code": 422
+                    }
+                ]
+            }
+        }
+
+    ]
+}

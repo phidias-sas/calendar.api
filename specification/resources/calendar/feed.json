@@ -1,0 +1,33 @@
+{
+    "url": "feed",
+    "title": "Lista de eventos en el calendario",
+    "description": "Este recurso representa un calendario",
+
+    "exchanges": [
+
+        {
+            "title": "Obtener los eventos en el rango de fechas indicado",
+            "request": {
+                "method": "get",
+                "parameters": {
+                    "start": {
+                        "$title": "fecha inicial",
+                        "$type": "date"
+                    },
+                    "end": {
+                        "$title": "fecha final",
+                        "$type": "date"
+                    }
+                }
+            },
+
+            "response": {
+                "code": 200,
+                "body": {
+                    "$type": "array",
+                    "$items": {"$ref": "/entities/event.json"}
+                }
+            }
+        }
+    ]
+}

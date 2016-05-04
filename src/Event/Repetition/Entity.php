@@ -31,7 +31,7 @@ class Entity extends \Phidias\Db\Orm\Entity
 
     protected static $schema = [
 
-        "table" => "event_repetitions",
+        "table" => "calendar_events_repetitions",
         "keys"  => ["id"],
 
         "attributes" => [

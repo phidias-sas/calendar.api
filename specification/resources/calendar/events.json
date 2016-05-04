@@ -1,9 +1,19 @@
 {
-    "path": "/calendar/events",
+    "url": "events",
+    "title": "Coleccion de eventos",
+    "description": "Este recurso representa todos los eventos creados",
 
-    "methods": {
-        "get": {
+    "resources": [
+        {"$ref": "events/eventId.json"}
+    ],
+
+    "exchanges": [
+
+        {
             "title": "Obtener una lista de eventos",
+            "request": {
+                "method": "get"
+            },
             "response": {
                 "code": 200,
                 "body": {
@@ -11,6 +21,41 @@
                     "$items": {"$ref": "/entities/event.json"}
                 }
             }
+        },
+
+        {
+            "title": "Crear un evento",
+
+            "request": {
+                "method": "post",
+                "body": {"$ref": "/entities/event.json"}
+            },
+
+            "response": {
+
+                "$any": [
+                    {
+                        "code": 201,
+                        "headers": {
+                            "location": {
+                                "$type": "string",
+                                "$title": "URL del evento que se acaba de crear"
+                            }
+                        },
+
+                        "body": {"$ref": "/entities/event.json"}
+                    },
+
+                    {
+                        "title": "Error de validacion de datos",
+                        "code": 422
+                    }
+
+                ]
+
+            }
+
         }
-    }
+
+    ]
 }
