@@ -33,8 +33,19 @@
         {
             "every": "week",
             "on": {
-                "$title": "Lista separada por comas de dias de la semana",
-                "$type": "string"
+                "$title": "Lista de dias de la semana (lunes = 1 ... domingo = 7)",
+                "$type": "array",
+                "$items": {
+                    "$any": [
+                        1, "mo", "mon", "monday",
+                        2, "tu", "tue", "tuesday",
+                        3, "we", "wed", "wednesday",
+                        4, "th", "thu", "thursday",
+                        5, "fr", "fri", "friday",
+                        6, "sa", "sat", "saturday",
+                        7, "su", "sun", "sunday"
+                    ]
+                }
             }
         }
     ]

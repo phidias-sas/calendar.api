@@ -28,7 +28,13 @@
 
     "endDate": {
         "$title": "Fecha inicial",
-        "$type":  "date"
+        "$type":  "date",
+        "$required": true
+    },
+
+    "allDay": {
+        "$title": "Todo el dia",
+        "$type":  "boolean"
     },
 
     "location": {
@@ -36,7 +42,7 @@
         "$type":  "string"
     },
 
-    "repeats": {"$ref": "/entities/repetition.json"},
+    "repeat": {"$ref": "/entities/repetition.json"},
 
     "creationDate": {
         "$title": "Fecha de creacion del evento",

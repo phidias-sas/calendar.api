@@ -126,7 +126,15 @@ class Controller
 
         if ($repetition->frequency == Repetition::FREQUENCY_WEEKLY) {
 
-            $weekDays = explode(",", trim($repetitionData->on));
+            if (is_array($repetitionData->on)) {
+                $weekDays = $repetitionData->on;
+            } else {
+                $weekDays = explode(",", trim($repetitionData->on));
+            }
+
+            $seenWeekdays = [];
+            $seenWeekdays[$repetition->weekDay] = true;
+
             foreach ($weekDays as $weekDayName) {
 
                 if (!$weekDayName = trim($weekDayName)) {
@@ -135,9 +143,11 @@ class Controller
 
                 $weekDay = self::getWeekDayNumber($weekDayName);
 
-                if ($weekDay === null || $repetition->weekDay == $weekDay) {
+                if ($weekDay === null || isset($seenWeekdays[$weekDay]) ) {
                     continue;
                 }
+
+                $seenWeekdays[$weekDay] = true;
 
                 $dayRepetition = clone($repetition);
 
@@ -163,10 +173,69 @@ class Controller
         return $repetition;
     }
 
-
-    public static function filterEventsInDateRange(\Phidias\Db\Orm\Collection $events, $startDate, $endDate = null)
+    /*
+    Obtains the given event's "repeat" property
+    from DB data
+    */
+    public static function getRepeat($event)
     {
-        if ($endDate === null || $endDate < $startDate) {
+        $repetitions = Repetition::collection()
+            ->attributes("frequency", "interval", "count", "until", "weekDay")
+            ->match("event", $event->id)
+            ->find();
+
+        if (!$repetitions->getNumRows()) {
+            return null;
+        }
+
+        $retval = new \stdClass;
+
+        foreach ($repetitions as $repetition) {
+
+            if (!isset($retval->every)) {
+
+                switch($repetition->frequency) {
+                    case Repetition::FREQUENCY_DAILY:
+                        $retval->every = "day";
+                    break;
+
+                    case Repetition::FREQUENCY_WEEKLY:
+                        $retval->every = "week";
+                        $retval->on    = [];
+                    break;
+
+                    case Repetition::FREQUENCY_MONTHLY_DAY:
+                        $retval->every = "month";
+                    break;
+
+                    case Repetition::FREQUENCY_MONTHLY_WEEKDAY:
+                        $retval->every = "month";
+                        $retval->on    = "weekday";
+                    break;
+
+                    case Repetition::FREQUENCY_YEARLY:
+                        $retval->every = "year";
+                    break;
+                }
+            }
+
+            $retval->interval = $repetition->interval;
+            $retval->count    = $repetition->count;
+            $retval->until    = $repetition->until;
+
+            if ($repetition->frequency == Repetition::FREQUENCY_WEEKLY) {
+                $retval->on[] = (int)$repetition->weekDay;
+            }
+
+        }
+
+        return $retval;
+    }
+
+
+    public static function filterEventsInDateRange(\Phidias\Db\Orm\Collection $events, $startDate, $endDate)
+    {
+        if ($endDate < $startDate) {
             $endDate = $startDate;
         }
 
@@ -174,7 +243,7 @@ class Controller
         $conditions = array();
 
         //non repeating events ocurring within the date range
-        $conditions[] = "(repetition.frequency IS NULL AND startDate >= $startDate AND (endDate IS NULL OR endDate <= $endDate))";
+        $conditions[] = "(repetition.id IS NULL AND startDate >= $startDate AND endDate <= $endDate)";
 
         //Repetition conditions for each day in the date range
         for ($date = $startDate; $date <= $endDate; $date = $date + 86400) {
@@ -197,23 +266,19 @@ class Controller
 
         $events->where(implode(" OR ", $conditions));
 
-
         //Fetch all repetition data for each event
         $events->attribute("repetition", Repetition::collection()
             ->allAttributes()
         );
 
-
         //Now, in post-processing, determine in which day in the date range the event ocurred, and create
         //an entry in the "occurrences" attribute
-
 
         $events->addFilter(function($event) use ($startDate, $endDate) {
 
             if (!isset($event->occurrences)) {
                 $event->occurrences = array();
             }
-
 
             for ($date = $startDate; $date <= $endDate; $date = $date + 86400) {
 
@@ -241,8 +306,9 @@ class Controller
                         || $repetition->frequency == Repetition::FREQUENCY_YEARLY && ($repetition->day == $day) && ($repetition->month == $month) && ($year - $repetition->year) % $repetition->interval == 0
                     ) {
 
-                        $childEvent = clone($event);
-                        $childEvent->start = mktime(date('h', $event->startDate), date('i', $event->startDate), date('s', $event->startDate), date('m', $date), date('d', $date), date('y', $date));
+                        $childEvent            = clone($event);
+                        $childEvent->startDate = mktime(date('h', $event->startDate), date('i', $event->startDate), date('s', $event->startDate), date('m', $date), date('d', $date), date('y', $date));
+                        $childEvent->endDate   = $childEvent->startDate + ($event->endDate - $event->startDate);
                         unset($childEvent->occurrences);
                         unset($childEvent->repetition);
 

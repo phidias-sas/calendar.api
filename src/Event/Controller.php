@@ -11,8 +11,11 @@ class Controller
         return Event::collection()->allAttributes();
     }
 
-    public function feed($startDate, $endDate = null)
+    public function feed($startDate, $endDate)
     {
+        $startDate = strtotime($startDate);
+        $endDate   = strtotime($endDate);
+
         $events = Event::collection()->allAttributes();
         RepetitionController::filterEventsInDateRange($events, $startDate, $endDate);
 
@@ -28,13 +31,15 @@ class Controller
     {
         $event = new Event($eventId);
         $event->setValues($eventData);
+
+        $event->startDate = strtotime($event->startDate);
+        $event->endDate   = strtotime($event->endDate);
+
         $event->creationDate     = !$eventId ? time(): $event->creationDate;
         $event->modificationDate = time();
         $event->save();
 
-        if (isset($eventData->repeats)) {
-            RepetitionController::repeat($event, $eventData->repeats);
-        }
+        RepetitionController::repeat($event, isset($eventData->repeat) ? $eventData->repeat : null);
 
         return $event;
     }

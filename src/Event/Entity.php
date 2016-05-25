@@ -8,6 +8,7 @@ class Entity extends \Phidias\Db\Orm\Entity
     var $location;
     var $startDate;
     var $endDate;
+    var $allDay;
     var $creationDate;
     var $modificationDate;
 
@@ -41,9 +42,13 @@ class Entity extends \Phidias\Db\Orm\Entity
 
             "endDate" => [
                 "type"       => "integer",
-                "unsigned"   => true,
-                "acceptNull" => true,
-                "default"    => null
+                "unsigned"   => true
+            ],
+
+            "allDay" => [
+                "type"       => "integer",
+                "length"     => 1,
+                "unsigned"   => true
             ],
 
             "creationDate" => [
