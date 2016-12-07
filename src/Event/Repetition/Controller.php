@@ -27,6 +27,14 @@ class Controller
         return $repetitionData;
     }
 
+    private static function daysSinceEpoch($date)
+    {
+        $current = new DateTime('@'.$date);
+        $epoch   = new DateTime('1970-01-01'); 
+        $diff    = $current->diff($epoch);
+        return (int)$diff->format('%a');
+    }
+
     private static function getWeekDayNumber($name)
     {
         if (is_numeric($name)) {
@@ -119,7 +127,7 @@ class Controller
         $repetition->weekDay       = date('N', $event->startDate);
         $repetition->weekDayN      = ceil($repetition->day/7);
         $repetition->weekDayIsLast = $repetition->day + 7 > date('t', $event->startDate);
-        $repetition->seqDay        = ceil($event->startDate / 86400);
+        $repetition->seqDay        = self::daysSinceEpoch($event->startDate);
         $repetition->seqMonth      = $repetition->month + ($repetition->year - 1970)*12;
 
         $repetitionCollection->add($repetition);
@@ -159,7 +167,7 @@ class Controller
                 $dayRepetition->weekDay       = date('N', $dayDate);
                 $dayRepetition->weekDayN      = ceil($dayRepetition->day/7);
                 $dayRepetition->weekDayIsLast = $dayRepetition->day + 7 > date('t', $dayDate);
-                $dayRepetition->seqDay        = ceil($dayDate / 86400);
+                $dayRepetition->seqDay        = self::daysSinceEpoch($dayDate);
                 $dayRepetition->seqMonth      = $dayRepetition->month + ($repetition->year - 1970)*12;
 
                 $repetitionCollection->add($dayRepetition);
@@ -254,13 +262,13 @@ class Controller
             $weekDay       = date('N', $date);
             $weekDayN      = ceil($day/7);
             $weekDayIsLast = $day + 7 > date('t', $date);
-            $seqDay        = ceil($date / 86400);
+            $seqDay        = self::daysSinceEpoch($date);
             $seqMonth      = $month + ($year - 1970)*12;
 
             $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_DAILY." AND ($seqDay - repetition.seqDay) % repetition.interval = 0)";
-            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_WEEKLY." AND repetition.weekDay = $weekDay) AND (($seqDay-repetition.seqDay)/7) % repetition.interval = 0";
+            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_WEEKLY." AND repetition.weekDay = $weekDay AND ($seqDay-repetition.seqDay)/7 % repetition.interval = 0)";
             $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_DAY." AND repetition.day = $day AND ($seqMonth - repetition.seqMonth) % repetition.interval = 0)";
-            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_WEEKDAY." AND repetition.weekDay = $weekDay AND IF(repetition.weekDayN = 5, repetition.weekDayIsLast, repetition.weekDayN = $weekDayN) AND ($seqMonth-repetition.seqMonth) % repetition.interval=0)";
+            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_WEEKDAY." AND repetition.weekDay = $weekDay AND IF(repetition.weekDayN = 5, repetition.weekDayIsLast, repetition.weekDayN = $weekDayN) AND ($seqMonth-repetition.seqMonth) % repetition.interval = 0)";
             $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
         }
 
@@ -295,7 +303,7 @@ class Controller
                     $weekDay       = date('N', $date);
                     $weekDayN      = ceil($day/7);
                     $weekDayIsLast = $day + 7 > date('t', $date);
-                    $seqDay        = ceil($date / 86400);
+                    $seqDay        = self::daysSinceEpoch($date);
                     $seqMonth      = $month + ($year - 1970)*12;
 
                     if (
