@@ -29,8 +29,8 @@ class Controller
 
     private static function daysSinceEpoch($date)
     {
-        $current = new DateTime('@'.$date);
-        $epoch   = new DateTime('1970-01-01'); 
+        $current = new \DateTime('@'.$date);
+        $epoch   = new \DateTime('1970-01-01'); 
         $diff    = $current->diff($epoch);
         return (int)$diff->format('%a');
     }
