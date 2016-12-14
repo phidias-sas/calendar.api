@@ -248,7 +248,7 @@ class Controller
         }
 
         //First, condition the query to return only events that ocurr in the specified date range
-        $conditions = array();
+        $conditions = [];
 
         //non repeating events ocurring within the date range
         $conditions[] = "(repetition.id IS NULL AND startDate >= $startDate AND endDate <= $endDate)";
@@ -265,16 +265,17 @@ class Controller
             $seqDay        = self::daysSinceEpoch($date);
             $seqMonth      = $month + ($year - 1970)*12;
 
-            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_DAILY." AND ($seqDay - repetition.seqDay) % repetition.interval = 0)";
-            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_WEEKLY." AND repetition.weekDay = $weekDay AND ($seqDay-repetition.seqDay)/7 % repetition.interval = 0)";
-            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_DAY." AND repetition.day = $day AND ($seqMonth - repetition.seqMonth) % repetition.interval = 0)";
-            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_WEEKDAY." AND repetition.weekDay = $weekDay AND IF(repetition.weekDayN = 5, repetition.weekDayIsLast, repetition.weekDayN = $weekDayN) AND ($seqMonth-repetition.seqMonth) % repetition.interval = 0)";
-            $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
+            $dayConditions = [];
+            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_DAILY." AND ($seqDay - repetition.seqDay) % repetition.interval = 0)";
+            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_WEEKLY." AND repetition.weekDay = $weekDay AND ($seqDay-repetition.seqDay)/7 % repetition.interval = 0)";
+            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_DAY." AND repetition.day = $day AND ($seqMonth - repetition.seqMonth) % repetition.interval = 0)";
+            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_WEEKDAY." AND repetition.weekDay = $weekDay AND IF(repetition.weekDayN = 5, repetition.weekDayIsLast, repetition.weekDayN = $weekDayN) AND ($seqMonth-repetition.seqMonth) % repetition.interval = 0)";
+            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
+
+            $conditions[] = "($date <= startDate AND (".implode(" OR ", $dayConditions)."))";
         }
 
-        $events->where("startDate <= :startDate", ["startDate" => $startDate]);
         $events->where(implode(" OR ", $conditions));
-
 
         //Fetch all repetition data for each event
         $events->attribute("repetition", Repetition::collection()
