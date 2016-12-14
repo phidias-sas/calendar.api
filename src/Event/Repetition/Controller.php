@@ -272,7 +272,7 @@ class Controller
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_WEEKDAY." AND repetition.weekDay = $weekDay AND IF(repetition.weekDayN = 5, repetition.weekDayIsLast, repetition.weekDayN = $weekDayN) AND ($seqMonth-repetition.seqMonth) % repetition.interval = 0)";
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
 
-            $conditions[] = "($date <= startDate AND (".implode(" OR ", $dayConditions)."))";
+            $conditions[] = "(startDate <= $date AND (".implode(" OR ", $dayConditions)."))";
         }
 
         $events->where(implode(" OR ", $conditions));
