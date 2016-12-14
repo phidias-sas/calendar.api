@@ -272,7 +272,9 @@ class Controller
             $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
         }
 
+        $events->where("startDate >= :startDate", ["startDate" => $startDate]);
         $events->where(implode(" OR ", $conditions));
+
 
         //Fetch all repetition data for each event
         $events->attribute("repetition", Repetition::collection()
