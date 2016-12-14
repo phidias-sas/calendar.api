@@ -30,7 +30,7 @@ class Controller
     private static function daysSinceEpoch($date)
     {
         $current = new \DateTime('@'.$date);
-        $epoch   = new \DateTime('1970-01-01'); 
+        $epoch   = new \DateTime('1970-01-01');
         $diff    = $current->diff($epoch);
         return (int)$diff->format('%a');
     }
@@ -272,7 +272,7 @@ class Controller
             $conditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
         }
 
-        $events->where(":startDate <= startDate", ["startDate" => $startDate]);
+        $events->where("startDate <= :startDate", ["startDate" => $startDate]);
         $events->where(implode(" OR ", $conditions));
 
 
