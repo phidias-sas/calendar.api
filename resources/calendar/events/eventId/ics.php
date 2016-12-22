@@ -1,10 +1,12 @@
-<?php return [
+<?php 
+use Phidias\Api\Http\Stream;
+return [
     "/calendar/events/{eventId}/ics" => [
         "get" => [
             "controller" => "Phidias\Calendar\Event\Ics\Controller->main({eventId})",
 
             "filter" => function($response, $output) {
-                $body = new Http\Stream("php://temp", "w");
+                $body = new Stream("php://temp", "w");
                 $body->write($output);
 
                 return $response
