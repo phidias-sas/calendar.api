@@ -2,13 +2,16 @@
 namespace Phidias\Calendar\Event;
 
 use Phidias\Calendar\Event\Entity as Event;
+use Phidias\Calendar\Event\Repetition\Entity as Repetition;
 use Phidias\Calendar\Event\Repetition\Controller as RepetitionController;
 
 class Controller
 {
     public function collection()
     {
-        return Event::collection()->allAttributes();
+        return Event::collection()
+            ->allAttributes()
+            ->attribute("repetition", Repetition::single()->allAttributes());
     }
 
     public function feed($startDate, $endDate)
