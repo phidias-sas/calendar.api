@@ -70,6 +70,10 @@ END:VEVENT";
         return "BEGIN:VCALENDAR
 VERSION:2.0
 PRODID:-//Phidias//NONSGML Phidias Academico//EN
+NAME:Phidias Academico
+X-WR-CALNAME:Phidias Academico
+DESCRIPTION:Mis eventos en el colegio
+X-WR-CALDESC:Mis eventos en el colegio
 {$allEvents}
 END:VCALENDAR";
     }
