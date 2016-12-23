@@ -65,7 +65,7 @@ END:VEVENT";
         foreach ($events as $event) {
             $allEvents[] = self::toIcs($event);
         }
-        $allEvents = implode("/n", $allEvents);
+        $allEvents = implode("\n", $allEvents);
 
         return "BEGIN:VCALENDAR
 VERSION:2.0
