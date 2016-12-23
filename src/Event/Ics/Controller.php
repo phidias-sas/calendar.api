@@ -1,17 +1,13 @@
 <?php
 namespace Phidias\Calendar\Event\Ics;
+
 use Phidias\Calendar\Event\Entity as Event;
 use Phidias\Calendar\Event\Repetition\Entity as Repetition;
 
 class Controller
 {
-    public function main($eventId)
+    public static function toIcs(Event $event)
     {
-        $event = Event::single()
-            ->allAttributes()
-            ->attribute("repetition", Repetition::single()->allAttributes())
-            ->fetch($eventId);
-
         $creationDate = date('Ymd\THis\Z', $event->creationDate);
         $startDate    = date('Ymd\THis\Z', $event->startDate);
         $endDate      = date('Ymd\THis\Z', $event->endDate);
@@ -54,18 +50,43 @@ class Controller
             $rRule = "";
         }
 
-        $icsContents = "BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//Phidias//NONSGML Phidias Academico//EN
-BEGIN:VEVENT
+        return "BEGIN:VEVENT
 UID:{$event->id}
 DTSTAMP:{$creationDate}
 DTSTART:{$startDate}
 DTEND:{$endDate}
 SUMMARY:{$event->title}{$rRule}
-END:VEVENT
-END:VCALENDAR";
+END:VEVENT";
+    }
 
-        return $icsContents;
+    public static function toCalendar(array $events)
+    {
+        $allEvents = [];
+        foreach ($events as $event) {
+            $allEvents[] = self::toIcs($event);
+        }
+        $allEvents = implode("/n", $allEvents);
+
+        return "BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Phidias//NONSGML Phidias Academico//EN
+{$allEvents}
+END:VCALENDAR";
+    }
+
+    public function main($eventId)
+    {
+        $event = Event::single()
+            ->allAttributes()
+            ->attribute("repetition", Repetition::single()->allAttributes())
+            ->fetch($eventId);
+
+        $icsEvent = self::toIcs($event);
+
+        return "BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Phidias//NONSGML Phidias Academico//EN
+{$icsEvent}
+END:VCALENDAR";
     }
 }

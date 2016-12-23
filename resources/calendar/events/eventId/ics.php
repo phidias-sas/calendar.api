@@ -11,7 +11,7 @@ return [
 
                 return $response
                     ->header("Content-type",        "text/calendar; charset=utf-8")
-                    ->header("Content-Disposition", "attachment; filename=event_{$eventId}.ics")
+                    ->header("Content-Disposition", "inline; filename=event_{$eventId}.ics")
                     ->header("Cache-Control",       "must-revalidate, post-check=0, pre-check=0")
                     ->body($body);
             }            
