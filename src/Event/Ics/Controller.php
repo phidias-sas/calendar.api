@@ -25,7 +25,6 @@ class Controller
 
                 case Repetition::FREQUENCY_WEEKLY:
                     $rules[] = "FREQ=WEEKLY";
-                    $rules[] = "BYSETPOS=" . ceil(date("j", $event->startDate)/7);
                     $rules[] = "BYDAY=" . strtoupper(substr(date("D", $event->startDate),0,2));
                     break;
 
@@ -36,6 +35,7 @@ class Controller
 
                 case Repetition::FREQUENCY_MONTHLY_WEEKDAY:
                     $rules[] = "FREQ=MONTHLY";
+                    $rules[] = "BYSETPOS=" . ceil(date("j", $event->startDate)/7);
                     break;
 
                 case Repetition::FREQUENCY_YEARLY:
