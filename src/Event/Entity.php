@@ -4,6 +4,7 @@ namespace Phidias\Calendar\Event;
 class Entity extends \Phidias\Db\Orm\Entity
 {
     var $id;
+    var $uid;
     var $title;
     var $location;
     var $startDate;
@@ -21,6 +22,13 @@ class Entity extends \Phidias\Db\Orm\Entity
 
             "id" => [
                 "type" => "uuid"
+            ],
+
+            "uid" => [
+                "type"       => "varchar",
+                "length"     => 255,
+                "acceptNull" => true,
+                "default"    => null
             ],
 
             "title" => [

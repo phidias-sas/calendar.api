@@ -1,13 +1,29 @@
 <?php
 namespace Phidias\Calendar\Event\Repetition;
 
+use DateTime;
 use Phidias\Calendar\Event\Entity as Event;
 use Phidias\Calendar\Event\Repetition\Entity as Repetition;
 
 class Controller
 {
-    private static function sanitizeRepetitionData($repetitionData)
+    /*
+    A valid repetitionData is an object with:
     {
+        every: [day|week|month|year],
+        on: [If every is "month" on can be "weekday" | If every is "day" on is an array or list of days]
+        interval:  how often the recurrence rule repeats.  e.g.  Every 4 days
+        count: optional.  Number of events in the series
+        until: optional. Date when repetition series ends
+    }
+    */
+    public static function sanitizeRepetitionData($repetitionData)
+    {
+        /* Parse string "RRULE" (e.g. RRULE:FREQ=WEEKLY;COUNT=3;BYDAY=TU,WE,TH) */
+        if (is_string($repetitionData)) {
+            $repetitionData = self::getRepetitionDataFromString($repetitionData);
+        }
+
         if (!is_object($repetitionData) || !isset($repetitionData->every) || !$repetitionData->every) {
             return null;
         }
@@ -27,10 +43,62 @@ class Controller
         return $repetitionData;
     }
 
+    private static function getRepetitionDataFromString($string)
+    {
+        $retval = new \stdClass;
+
+        $parts = explode(":", $string);
+        if (count($parts) != 2 || $parts[0] != "RRULE") {
+            return null;
+        }
+
+        $data = [];
+        foreach (explode(";", $parts[1]) as $rule) {
+            list($name, $value) = explode('=', $rule);
+            $data[$name] = $value;
+        }
+
+        if (!isset($data["FREQ"])) {
+            return null;
+        }
+
+        switch (strtolower($data["FREQ"])) {
+            case "daily":
+                $retval->every = "day";
+            break;
+
+            case "weekly":
+                $retval->every = "week";
+                $retval->on    = isset($data["BYDAY"]) ? $data["BYDAY"] : null;
+            break;
+
+            case "monthly":
+                $retval->every = "month";
+                $retval->on    = isset($data["BYDAY"]) ? "weekday" : null;
+            break;
+
+            case "yearly":
+                $retval->every = "year";
+            break;
+
+            default:
+                return null;
+        }
+
+        $retval->interval = isset($data["INTERVAL"]) ? $data["INTERVAL"] : 1;
+        $retval->count    = isset($data["COUNT"]) ? $data["COUNT"] : null;
+
+        if (isset($data["UNTIL"])) {
+            $retval->until = (new DateTime($data["UNTIL"]))->getTimestamp();
+        }
+
+        return $retval;
+    }
+
     private static function daysSinceEpoch($date)
     {
-        $current = new \DateTime('@'.$date);
-        $epoch   = new \DateTime('1970-01-01');
+        $current = new DateTime('@'.$date);
+        $epoch   = new DateTime('1970-01-01');
         $diff    = $current->diff($epoch);
         return (int)$diff->format('%a');
     }
@@ -251,7 +319,7 @@ class Controller
         $conditions = [];
 
         //non repeating events ocurring within the date range
-        $conditions[] = "(repetition.id IS NULL AND startDate >= $startDate AND endDate <= $endDate)";
+        $conditions[] = "(repetition.id IS NULL AND startDate <= $endDate AND endDate >= $startDate)";
 
         //Repetition conditions for each day in the date range
         for ($date = $startDate; $date <= $endDate; $date = $date + 86400) {
@@ -272,7 +340,9 @@ class Controller
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_WEEKDAY." AND repetition.weekDay = $weekDay AND IF(repetition.weekDayN = 5, repetition.weekDayIsLast, repetition.weekDayN = $weekDayN) AND ($seqMonth-repetition.seqMonth) % repetition.interval = 0)";
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
 
-            $conditions[] = "(".implode(" OR ", $dayConditions).")";
+            $ocurrsOnThisDay = "(".implode(" OR ", $dayConditions).")";
+
+            $conditions[] = "( (repetition.until IS NULL OR repetition.until >= $date) AND $ocurrsOnThisDay )";
         }
 
         $events->where("startDate <= :endDate", ["endDate" => $endDate]);
@@ -311,11 +381,14 @@ class Controller
                     $seqMonth      = $month + ($year - 1970)*12;
 
                     if (
-                           $repetition->frequency == Repetition::FREQUENCY_DAILY && ($seqDay - $repetition->seqDay) % $repetition->interval == 0
-                        || $repetition->frequency == Repetition::FREQUENCY_WEEKLY && ($repetition->weekDay == $weekDay) && (($seqDay-$repetition->seqDay)/7) % $repetition->interval == 0
-                        || $repetition->frequency == Repetition::FREQUENCY_MONTHLY_DAY && ($repetition->day == $day) && ($seqMonth - $repetition->seqMonth) % $repetition->interval == 0
-                        || $repetition->frequency == Repetition::FREQUENCY_MONTHLY_WEEKDAY && ($repetition->weekDay == $weekDay) && ($repetition->weekDayN == 5 ? $repetition->weekDayIsLast : $repetition->weekDayN == $weekDayN) && ($seqMonth - $repetition->seqMonth) % $repetition->interval == 0
-                        || $repetition->frequency == Repetition::FREQUENCY_YEARLY && ($repetition->day == $day) && ($repetition->month == $month) && ($year - $repetition->year) % $repetition->interval == 0
+                        ($repetition->until == null || $repetition->until >= $date)
+                        && (
+                            $repetition->frequency == Repetition::FREQUENCY_DAILY && ($seqDay - $repetition->seqDay) % $repetition->interval == 0
+                            || $repetition->frequency == Repetition::FREQUENCY_WEEKLY && ($repetition->weekDay == $weekDay) && (($seqDay-$repetition->seqDay)/7) % $repetition->interval == 0
+                            || $repetition->frequency == Repetition::FREQUENCY_MONTHLY_DAY && ($repetition->day == $day) && ($seqMonth - $repetition->seqMonth) % $repetition->interval == 0
+                            || $repetition->frequency == Repetition::FREQUENCY_MONTHLY_WEEKDAY && ($repetition->weekDay == $weekDay) && ($repetition->weekDayN == 5 ? $repetition->weekDayIsLast : $repetition->weekDayN == $weekDayN) && ($seqMonth - $repetition->seqMonth) % $repetition->interval == 0
+                            || $repetition->frequency == Repetition::FREQUENCY_YEARLY && ($repetition->day == $day) && ($repetition->month == $month) && ($year - $repetition->year) % $repetition->interval == 0
+                        )
                     ) {
 
                         $childEvent            = clone($event);
@@ -333,5 +406,6 @@ class Controller
         });
 
     }
+
 
 }
