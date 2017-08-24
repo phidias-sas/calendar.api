@@ -56,7 +56,8 @@ class Entity extends \Phidias\Db\Orm\Entity
             "allDay" => [
                 "type"       => "integer",
                 "length"     => 1,
-                "unsigned"   => true
+                "unsigned"   => true,
+                "default"    => 0
             ],
 
             "creationDate" => [

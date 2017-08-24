@@ -32,12 +32,12 @@ class Controller
 
     public function save($eventData, $eventId = null)
     {
-        $event = new Event($eventId);
+        $event         = new Event($eventId);
+        $event->allDay = 0;
         $event->setValues($eventData);
 
-        $event->startDate = strtotime($event->startDate);
-        $event->endDate   = strtotime($event->endDate);
-
+        $event->startDate        = !is_numeric($event->startDate) ? strtotime($event->startDate) : $event->startDate;
+        $event->endDate          = !is_numeric($event->endDate)   ? strtotime($event->endDate)   : $event->endDate;
         $event->creationDate     = !$event->id ? time(): $event->creationDate;
         $event->modificationDate = time();
         $event->save();
