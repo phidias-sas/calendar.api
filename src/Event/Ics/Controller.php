@@ -8,9 +8,9 @@ class Controller
 {
     public static function toIcs(Event $event)
     {
-        $creationDate = date('Ymd\THis\Z', $event->creationDate);
-        $startDate    = date('Ymd\THis\Z', $event->startDate);
-        $endDate      = date('Ymd\THis\Z', $event->endDate);
+        $creationDate = gmdate('Ymd\THis\Z', $event->creationDate);
+        $startDate    = gmdate('Ymd\THis\Z', $event->startDate);
+        $endDate      = gmdate('Ymd\THis\Z', $event->endDate);
 
         if ($event->repetition) {
             $rules = [];
