@@ -38,7 +38,7 @@ class Controller
 
         $event->startDate        = !is_numeric($event->startDate) ? strtotime($event->startDate) : $event->startDate;
         $event->endDate          = !is_numeric($event->endDate)   ? strtotime($event->endDate)   : $event->endDate;
-        $event->creationDate     = !$event->id ? time(): $event->creationDate;
+        $event->creationDate     = $event->creationDate ? $event->creationDate : time();
         $event->modificationDate = time();
         $event->save();
 
