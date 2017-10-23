@@ -50,13 +50,25 @@ class Controller
             $rRule = "";
         }
 
-        return "BEGIN:VEVENT
+        if ($event->allDay) {
+            $startDate = gmdate('Ymd', $event->startDate);
+
+            return "BEGIN:VEVENT
+UID:{$event->id}
+DTSTAMP:{$creationDate}
+DTSTART;VALUE=DATE:{$startDate}
+SUMMARY:{$event->title}{$rRule}
+END:VEVENT";
+        } else {
+            return "BEGIN:VEVENT
 UID:{$event->id}
 DTSTAMP:{$creationDate}
 DTSTART:{$startDate}
 DTEND:{$endDate}
 SUMMARY:{$event->title}{$rRule}
 END:VEVENT";
+        }
+
     }
 
     public static function toCalendar(array $events)
