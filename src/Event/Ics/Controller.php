@@ -52,14 +52,22 @@ class Controller
 
         if ($event->allDay) {
             $startDate = gmdate('Ymd', $event->startDate);
+            $endDate   = gmdate('Ymd', $event->endDate);
+
+            $dateString = "DTSTART;VALUE=DATE:{$startDate}";
+            if ($startDate != $endDate) {
+                $dateString .= "\nDTEND;VALUE=DATE:{$endDate}";
+            }
 
             return "BEGIN:VEVENT
 UID:{$event->id}
 DTSTAMP:{$creationDate}
-DTSTART;VALUE=DATE:{$startDate}
+{$dateString}
 SUMMARY:{$event->title}{$rRule}
 END:VEVENT";
+
         } else {
+
             return "BEGIN:VEVENT
 UID:{$event->id}
 DTSTAMP:{$creationDate}
