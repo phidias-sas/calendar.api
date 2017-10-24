@@ -62,6 +62,7 @@ class Controller
 
             return "BEGIN:VEVENT
 UID:{$event->id}
+DTSTAMP:{$creationDate}
 DTSTART;VALUE=DATE:{$startDate}
 DTEND;VALUE=DATE:{$endDate}
 SUMMARY:{$event->title}{$rRule}
