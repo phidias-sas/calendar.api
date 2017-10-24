@@ -51,8 +51,8 @@ class Controller
         }
 
         if ($event->allDay) {
-            $startDate = gmdate('Ymd', $event->startDate);
-            $endDate   = gmdate('Ymd', $event->endDate);
+            $startDate = date('Ymd', $event->startDate);
+            $endDate   = date('Ymd', $event->endDate);
 
             if ($startDate == $endDate) {
                 $tomorrow = new \DateTime('@'.$event->startDate);
@@ -62,7 +62,6 @@ class Controller
 
             return "BEGIN:VEVENT
 UID:{$event->id}
-DTSTAMP:{$creationDate}
 DTSTART;VALUE=DATE:{$startDate}
 DTEND;VALUE=DATE:{$endDate}
 SUMMARY:{$event->title}{$rRule}
