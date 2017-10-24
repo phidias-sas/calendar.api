@@ -55,7 +55,7 @@ class Controller
             $endDate   = gmdate('Ymd', $event->endDate);
 
             if ($startDate == $endDate) {
-                $tomorrow = new DateTime('@'.$event->startDate);
+                $tomorrow = new \DateTime('@'.$event->startDate);
                 $tomorrow->modify('+1 day');
                 $endDate = $tomorrow->format('Ymd');
             }
