@@ -54,15 +54,16 @@ class Controller
             $startDate = gmdate('Ymd', $event->startDate);
             $endDate   = gmdate('Ymd', $event->endDate);
 
-            $dateString = "DTSTART;VALUE=DATE:{$startDate}";
-            if ($startDate != $endDate) {
-                $dateString .= "\nDTEND;VALUE=DATE:{$endDate}";
+            if ($startDate == $endDate) {
+                $tomorrow = new DateTime('@'.$event->startDate);
+                $tomorrow->modify('+1 day');
+                $endDate = $tomorrow->format('Ymd');
             }
 
             return "BEGIN:VEVENT
 UID:{$event->id}
-DTSTAMP:{$creationDate}
-{$dateString}
+DTSTART;VALUE=DATE:{$startDate}
+DTEND;VALUE=DATE:{$endDate}
 SUMMARY:{$event->title}{$rRule}
 END:VEVENT";
 
