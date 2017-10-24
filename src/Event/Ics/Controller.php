@@ -52,10 +52,7 @@ class Controller
 
         if ($event->allDay) {
             $startDate = date('Ymd', $event->startDate);
-
-            $tomorrow = new \DateTime('@'.$event->endDate);
-            $tomorrow->modify('+1 day');
-            $endDate = $tomorrow->format('Ymd');
+            $endDate   = date('Ym', $event->endDate) . (date('d', $event->endDate) + 1);
 
             return "BEGIN:VEVENT
 UID:{$event->id}
