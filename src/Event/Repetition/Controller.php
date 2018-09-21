@@ -227,7 +227,11 @@ class Controller
 
                 $dayRepetition = clone($repetition);
 
-                $dayDate = $event->startDate + ($weekDay - $repetition->weekDay)*86400;
+                $offset = $weekDay - $repetition->weekDay;
+                if ($offset < 0) {
+                    $offset = $offset + 7;
+                }
+                $dayDate = $event->startDate + $offset*86400;
 
                 $dayRepetition->day           = date('d', $dayDate);
                 $dayRepetition->month         = date('n', $dayDate);
@@ -239,9 +243,7 @@ class Controller
                 $dayRepetition->seqMonth      = $dayRepetition->month + ($repetition->year - 1970)*12;
 
                 $repetitionCollection->add($dayRepetition);
-
             }
-
         }
 
         $repetitionCollection->save();
