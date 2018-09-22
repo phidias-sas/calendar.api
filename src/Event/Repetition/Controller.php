@@ -97,6 +97,8 @@ class Controller
 
     private static function daysSinceEpoch($date)
     {
+        $date = mktime(0, 0, 0, date("m", $date), date("d", $date), date("Y", $date));
+
         $current = new DateTime('@'.$date);
         $epoch   = new DateTime('1970-01-01');
         $diff    = $current->diff($epoch);
@@ -337,7 +339,7 @@ class Controller
 
             $dayConditions = [];
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_DAILY." AND ($seqDay - repetition.seqDay) % repetition.interval = 0)";
-            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_WEEKLY." AND repetition.weekDay = $weekDay AND (CEIL(($seqDay+3)/7) - CEIL((repetition.seqDay+3)/7)) % repetition.interval = 0)";
+            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_WEEKLY." AND repetition.weekDay = $weekDay AND (($seqDay - repetition.seqDay)/7) % repetition.interval = 0)";
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_DAY." AND repetition.day = $day AND ($seqMonth - repetition.seqMonth) % repetition.interval = 0)";
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_WEEKDAY." AND repetition.weekDay = $weekDay AND IF(repetition.weekDayN = 5, repetition.weekDayIsLast, repetition.weekDayN = $weekDayN) AND ($seqMonth-repetition.seqMonth) % repetition.interval = 0)";
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
