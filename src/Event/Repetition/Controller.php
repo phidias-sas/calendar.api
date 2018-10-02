@@ -339,7 +339,7 @@ class Controller
 
             $dayConditions = [];
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_DAILY." AND ($seqDay - repetition.seqDay) % repetition.interval = 0)";
-            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_WEEKLY." AND repetition.weekDay = $weekDay AND (($seqDay - repetition.seqDay)/7) % repetition.interval = 0)";
+            $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_WEEKLY." AND repetition.weekDay = $weekDay AND FLOOR(($seqDay - repetition.seqDay)/7) % repetition.interval = 0)";
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_DAY." AND repetition.day = $day AND ($seqMonth - repetition.seqMonth) % repetition.interval = 0)";
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_MONTHLY_WEEKDAY." AND repetition.weekDay = $weekDay AND IF(repetition.weekDayN = 5, repetition.weekDayIsLast, repetition.weekDayN = $weekDayN) AND ($seqMonth-repetition.seqMonth) % repetition.interval = 0)";
             $dayConditions[] = "(repetition.frequency = ".Repetition::FREQUENCY_YEARLY." AND repetition.day = $day AND repetition.month = $month AND ($year - repetition.year) % repetition.interval = 0)";
@@ -388,7 +388,7 @@ class Controller
                         ($repetition->until == null || $repetition->until >= $date)
                         && (
                             $repetition->frequency == Repetition::FREQUENCY_DAILY && ($seqDay - $repetition->seqDay) % $repetition->interval == 0
-                            || $repetition->frequency == Repetition::FREQUENCY_WEEKLY && ($repetition->weekDay == $weekDay) && (($seqDay-$repetition->seqDay)/7) % $repetition->interval == 0
+                            || $repetition->frequency == Repetition::FREQUENCY_WEEKLY && ($repetition->weekDay == $weekDay) && floor(($seqDay-$repetition->seqDay)/7) % $repetition->interval == 0
                             || $repetition->frequency == Repetition::FREQUENCY_MONTHLY_DAY && ($repetition->day == $day) && ($seqMonth - $repetition->seqMonth) % $repetition->interval == 0
                             || $repetition->frequency == Repetition::FREQUENCY_MONTHLY_WEEKDAY && ($repetition->weekDay == $weekDay) && ($repetition->weekDayN == 5 ? $repetition->weekDayIsLast : $repetition->weekDayN == $weekDayN) && ($seqMonth - $repetition->seqMonth) % $repetition->interval == 0
                             || $repetition->frequency == Repetition::FREQUENCY_YEARLY && ($repetition->day == $day) && ($repetition->month == $month) && ($year - $repetition->year) % $repetition->interval == 0
