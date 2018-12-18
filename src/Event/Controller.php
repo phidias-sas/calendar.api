@@ -16,8 +16,8 @@ class Controller
 
     public function feed($startDate, $endDate)
     {
-        $startDate = strtotime($startDate);
-        $endDate   = strtotime($endDate);
+        $startDate = is_numeric($startDate) ? $startDate : strtotime($startDate);
+        $endDate   = is_numeric($endDate)   ? $endDate   : strtotime($endDate);
 
         $events = Event::collection()->allAttributes();
         RepetitionController::filterEventsInDateRange($events, $startDate, $endDate);
