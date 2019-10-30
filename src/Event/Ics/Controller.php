@@ -4,6 +4,10 @@ namespace Phidias\Calendar\Event\Ics;
 use Phidias\Calendar\Event\Entity as Event;
 use Phidias\Calendar\Event\Repetition\Entity as Repetition;
 
+use Phidias\Post\Entity as Post;
+use Phidias\Core\Noun\Entity as PostType;
+use Phidias\Calendar\Post\Event\Entity as PostEvent;
+
 class Controller
 {
     public static function toIcs(Event $event)
@@ -12,6 +16,24 @@ class Controller
         $startDate    = gmdate('Ymd\THis\Z', $event->startDate);
         $endDate      = gmdate('Ymd\THis\Z', $event->endDate);
 
+        $postEvent = PostEvent::single()
+            ->attribute("post", Post::single()
+                    ->allAttributes()
+                    ->attribute("type", PostType::single()->allAttributes())
+                    )
+            ->where("event = :evtId", ["evtId" => $event->id])
+            ->find()
+            ->first();
+
+        $postData = "";
+        
+        if($postEvent){
+            $clean_description = html_entity_decode(strip_tags($postEvent->post->description));
+            $postData = "
+DESCRIPTION:{$clean_description}
+CATEGORY:{$postEvent->post->type->plural}";
+        }
+        
         if ($event->repetition) {
             $rules = [];
             switch ($event->repetition->frequency) {
@@ -58,7 +80,7 @@ class Controller
 UID:{$event->id}
 DTSTART;VALUE=DATE:{$startDate}
 DTEND;VALUE=DATE:{$endDate}
-SUMMARY:{$event->title}{$rRule}
+SUMMARY:{$event->title}{$rRule}{$postData}
 END:VEVENT";
 
         } else {
@@ -68,7 +90,7 @@ UID:{$event->id}
 DTSTAMP:{$creationDate}
 DTSTART:{$startDate}
 DTEND:{$endDate}
-SUMMARY:{$event->title}{$rRule}
+SUMMARY:{$event->title}{$rRule}{$postData}
 END:VEVENT";
         }
 
