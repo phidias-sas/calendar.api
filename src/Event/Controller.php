@@ -9,6 +9,7 @@ class Controller
 {
     public function collection()
     {
+     //something   
         return Event::collection()
             ->allAttributes()
             ->attribute("repetition", Repetition::single()->allAttributes());
