@@ -28,9 +28,10 @@ class Controller
         $postData = "";
         
         if($postEvent){
-            $clean_description = html_entity_decode(strip_tags($postEvent->post->description));
+            $clean_description = strip_tags($postEvent->post->description, '<p>');
             $clean_description = str_replace( "<p>", '', $clean_description ); 
             $clean_description = str_replace( "</p>", '\n', $clean_description ); 
+            $clean_description = html_entity_decode($clean_description);
 
             $postData = "
 DESCRIPTION:{$clean_description}
