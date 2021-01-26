@@ -29,6 +29,9 @@ class Controller
         
         if($postEvent){
             $clean_description = html_entity_decode(strip_tags($postEvent->post->description));
+            $clean_description = str_replace( "<p>", '', $clean_description ); 
+            $clean_description = str_replace( "</p>", '\n', $clean_description ); 
+
             $postData = "
 DESCRIPTION:{$clean_description}
 CATEGORY:{$postEvent->post->type->plural}";
