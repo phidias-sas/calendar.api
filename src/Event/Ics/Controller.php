@@ -137,17 +137,19 @@ END:VCALENDAR";
 
     public static function abc($htmlMsg)
     {
-        $temp = str_replace(array("</p>"),"\n",$htmlMsg);
-        $temp = str_replace(array("<p>"),"",$temp);
+        $temp = str_replace("</p>","\n",$htmlMsg);
+        $temp = str_replace("<p>","",$temp);
 
         $lines = explode("\n",$temp);
         $new_lines = array();
         foreach($lines as $i => $line)
         {
-            if(!empty($line))
-            $new_lines[]=trim($line);
+            if( !empty($line) && strlen(trim($line)) > 0)
+            {
+                $new_lines[]=trim($line);
+            }
         }
-        $desc = implode("\r\n ",$new_lines);
+        $desc = implode("\n\n ",$new_lines);
         
         return $desc;
     }
