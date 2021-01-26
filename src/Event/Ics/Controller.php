@@ -28,11 +28,9 @@ class Controller
         $postData = "";
         
         if($postEvent){
-            $clean_description = strip_tags($postEvent->post->description, '<p>');
-            $clean_description = str_replace( "<p>", '', $clean_description ); 
-            $clean_description = str_replace( "</p>", '\n', $clean_description ); 
-            $clean_description = html_entity_decode($clean_description);
-
+            $clean_description = html_entity_decode($postEvent->post->description);
+            $clean_description = self::abc($clean_description);
+            
             $postData = "
 DESCRIPTION:{$clean_description}
 CATEGORY:{$postEvent->post->type->plural}";
@@ -133,5 +131,22 @@ VERSION:2.0
 PRODID:-//Phidias//NONSGML Phidias Academico//EN
 {$icsEvent}
 END:VCALENDAR";
+    }
+
+    public static function abc($htmlMsg)
+    {
+        $temp = str_replace(array("</p>"),"\n",$htmlMsg);
+        $temp = str_replace(array("<p>"),"",$temp);
+
+        $lines = explode("\n",$temp);
+        $new_lines = array();
+        foreach($lines as $i => $line)
+        {
+            if(!empty($line))
+            $new_lines[]=trim($line);
+        }
+        $desc = implode("\r\n ",$new_lines);
+        
+        return $desc;
     }
 }
