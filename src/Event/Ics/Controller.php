@@ -28,11 +28,13 @@ class Controller
         $postData = "";
         
         if($postEvent){
+            $clean_description_html = html_entity_decode($postEvent->post->description);
             $clean_description = html_entity_decode($postEvent->post->description);
             $clean_description = self::abc($clean_description);
             
             $postData = "
 DESCRIPTION:{$clean_description}
+X-ALT-DESC;FMTTYPE=text/html:{$clean_description_html}
 CATEGORY:{$postEvent->post->type->plural}";
         }
         
