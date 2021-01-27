@@ -28,12 +28,12 @@ class Controller
         $postData = "";
         
         if($postEvent){
+            $clean_description_html = html_entity_decode($postEvent->post->description);
             $clean_description = html_entity_decode($postEvent->post->description);
             $clean_description = self::abc($clean_description);
             
-            $postData = "
-DESCRIPTION:{$clean_description}{PHP_EOL}
-CATEGORY:{$postEvent->post->type->plural}{PHP_EOL}";
+            $postData = "DESCRIPTION:{$clean_description}";
+            $postData .= "CATEGORY:{$postEvent->post->type->plural}".PHP_EOL;
         }
         
         if ($event->repetition) {
@@ -44,29 +44,29 @@ CATEGORY:{$postEvent->post->type->plural}{PHP_EOL}";
                     break;
 
                 case Repetition::FREQUENCY_WEEKLY:
-                    $rules[] = "FREQ=WEEKLY".PHP_EOL;
-                    $rules[] = "BYDAY=" . strtoupper(substr(date("D", $event->startDate),0,2)).PHP_EOL;
+                    $rules[] = "FREQ=WEEKLY"PHP_EOL;
+                    $rules[] = "BYDAY=" . strtoupper(substr(date("D", $event->startDate),0,2))PHP_EOL;
                     break;
 
                 case Repetition::FREQUENCY_MONTHLY_DAY:
-                    $rules[] = "FREQ=MONTHLY".PHP_EOL;
-                    $rules[] = "BYMONTHDAY=" . date("j", $event->startDate).PHP_EOL;
+                    $rules[] = "FREQ=MONTHLY"PHP_EOL;
+                    $rules[] = "BYMONTHDAY=" . date("j", $event->startDate)PHP_EOL;
                     break;
 
                 case Repetition::FREQUENCY_MONTHLY_WEEKDAY:
-                    $rules[] = "FREQ=MONTHLY".PHP_EOL;
-                    $rules[] = "BYSETPOS=" . ceil(date("j", $event->startDate)/7).PHP_EOL;
+                    $rules[] = "FREQ=MONTHLY"PHP_EOL;
+                    $rules[] = "BYSETPOS=" . ceil(date("j", $event->startDate)/7)PHP_EOL;
                     break;
 
                 case Repetition::FREQUENCY_YEARLY:
-                    $rules[] = "FREQ=YEARLY".PHP_EOL;
+                    $rules[] = "FREQ=YEARLY"PHP_EOL;
                     break;
             }
 
-            $rules[] = "INTERVAL={$event->repetition->interval}{PHP_EOL}";
+            $rules[] = "INTERVAL={$event->repetition->interval}".PHP_EOL;
 
             if ($event->repetition->count) {
-                $rules[] = "COUNT={$event->repetition->count}{PHP_EOL}";
+                $rules[] = "COUNT={$event->repetition->count}".PHP_EOL;
             }
 
             $rRule = "\nRRULE:" . implode(";", $rules);
@@ -74,27 +74,30 @@ CATEGORY:{$postEvent->post->type->plural}{PHP_EOL}";
             $rRule = "";
         }
 
+        $output = "";
         if ($event->allDay) {
             $startDate = date('Ymd', $event->startDate);
             $endDate   = date('Ymd', $event->endDate + 86400);
 
-            return "BEGIN:VEVENT{PHP_EOL}
-UID:{$event->id}{PHP_EOL}
-DTSTART;VALUE=DATE:{$startDate}{PHP_EOL}
-DTEND;VALUE=DATE:{$endDate}{PHP_EOL}
-SUMMARY:{$event->title}{$rRule}{$postData}{PHP_EOL}
-END:VEVENT{PHP_EOL}";
+            $output = "BEGIN:VEVENT".PHP_EOL;
+            $output .= "UID:{$event->id}".PHP_EOL;
+            $output .= "DTSTART;VALUE=DATE:{$startDate}".PHP_EOL;
+            $output .= "DTEND;VALUE=DATE:{$endDate}".PHP_EOL;
+            $output .= "SUMMARY:{$event->title}{$rRule}{$postData}".PHP_EOL;
+            $output .= "END:VEVENT".PHP_EOL;           
 
         } else {
 
-            return "BEGIN:VEVENT{PHP_EOL}
-UID:{$event->id}{PHP_EOL}
-DTSTAMP:{$creationDate}{PHP_EOL}
-DTSTART:{$startDate}{PHP_EOL}
-DTEND:{$endDate}{PHP_EOL}
-SUMMARY:{$event->title}{$rRule}{$postData}{PHP_EOL}
-END:VEVENT{PHP_EOL}";
+            $output = "BEGIN:VEVENT".PHP_EOL;
+            $output .= "UID:{$event->id}".PHP_EOL;
+            $output .= "DTSTAMP:{$creationDate}".PHP_EOL;
+            $output .= "DTSTART:{$startDate}".PHP_EOL;
+            $output .= "DTEND:{$endDate}".PHP_EOL;
+            $output .= "SUMMARY:{$event->title}{$rRule}{$postData}".PHP_EOL;
+            $output .= "END:VEVENT".PHP_EOL;
         }
+
+        return $output;
 
     }
 
@@ -106,15 +109,15 @@ END:VEVENT{PHP_EOL}";
         }
         $allEvents = implode("\n", $allEvents);
 
-        return "BEGIN:VCALENDAR{PHP_EOL}
-VERSION:2.0{PHP_EOL}
-PRODID:-//Phidias//NONSGML Phidias Academico//EN{PHP_EOL}
-NAME:Phidias Academico{PHP_EOL}
-X-WR-CALNAME:Phidias Academico{PHP_EOL}
-DESCRIPTION:Mis eventos en el colegio{PHP_EOL}
-X-WR-CALDESC:Mis eventos en el colegio{PHP_EOL}
+        return "BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Phidias//NONSGML Phidias Academico//EN
+NAME:Phidias Academico
+X-WR-CALNAME:Phidias Academico
+DESCRIPTION:Mis eventos en el colegio
+X-WR-CALDESC:Mis eventos en el colegio
 {$allEvents}
-END:VCALENDAR{PHP_EOL}";
+END:VCALENDAR";
     }
 
     public function main($eventId)
@@ -126,11 +129,11 @@ END:VCALENDAR{PHP_EOL}";
 
         $icsEvent = self::toIcs($event);
 
-        return "BEGIN:VCALENDAR{PHP_EOL}
-VERSION:2.0{PHP_EOL}
-PRODID:-//Phidias//NONSGML Phidias Academico//EN{PHP_EOL}
+        return "BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Phidias//NONSGML Phidias Academico//EN
 {$icsEvent}
-END:VCALENDAR{PHP_EOL}";
+END:VCALENDAR".PHP_EOL;
     }
 
     public static function abc($htmlMsg)
