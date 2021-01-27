@@ -147,7 +147,7 @@ END:VCALENDAR{PHP_EOL}";
                 $new_lines[]=trim($line);
             }
         }
-        $desc = implode(PHP_EOL,$new_lines);
+        $desc = implode("\r\n".PHP_EOL,$new_lines);
         
         return $desc;
     }
