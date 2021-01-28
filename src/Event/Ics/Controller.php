@@ -146,7 +146,7 @@ END:VCALENDAR";
         {
             if( !empty($line) && strlen(trim($line)) > 0)
             {
-                $new_lines.= trim($line)."\n\n";
+                $new_lines.= trim($line)."\\n\\n";
             }
         }
         //$desc = implode("\r\n",$new_lines);
