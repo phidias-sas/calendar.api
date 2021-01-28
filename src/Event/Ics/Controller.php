@@ -151,6 +151,6 @@ END:VCALENDAR";
         }
         //$desc = implode("\r\n",$new_lines);
         
-        return $desc;
+        return $new_lines;
     }
 }
