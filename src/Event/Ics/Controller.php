@@ -141,15 +141,15 @@ END:VCALENDAR";
         $temp = str_replace("<p>","",$temp);
 
         $lines = explode("\n",$temp);
-        $new_lines = array();
+        $new_lines = "";
         foreach($lines as $i => $line)
         {
             if( !empty($line) && strlen(trim($line)) > 0)
             {
-                $new_lines[]=trim($line);
+                $new_lines.= trim($line)."\n\n";
             }
         }
-        $desc = implode("\r\n",$new_lines);
+        //$desc = implode("\r\n",$new_lines);
         
         return $desc;
     }
