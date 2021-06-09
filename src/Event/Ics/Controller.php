@@ -22,9 +22,13 @@ class Controller
             ->first();
         $postData = "";
         if($postEvent){
-            $clean_description = html_entity_decode(strip_tags($postEvent->post->description));
+            $clean_description_html = html_entity_decode($postEvent->post->description);
+            $clean_description = html_entity_decode($postEvent->post->description);
+            $clean_description = self::abc($clean_description);
+            
             $postData = "
 DESCRIPTION:{$clean_description}
+X-ALT-DESC;FMTTYPE=text/html:{$clean_description_html}
 CATEGORY:{$postEvent->post->type->plural}";
         }
         if ($event->repetition) {
@@ -189,5 +193,24 @@ VERSION:2.0
 PRODID:-//Phidias//NONSGML Phidias Academico//EN
 {$icsEvent}
 END:VCALENDAR";
+    }
+
+    public static function abc($htmlMsg)
+    {
+        $temp = str_replace("</p>","\n",$htmlMsg);
+        $temp = str_replace("<p>","",$temp);
+
+        $lines = explode("\n",$temp);
+        $new_lines = "";
+        foreach($lines as $i => $line)
+        {
+            if( !empty($line) && strlen(trim($line)) > 0)
+            {
+                $new_lines.= trim($line)."\\n\\n";
+            }
+        }
+        //$desc = implode("\r\n",$new_lines);
+        
+        return $new_lines;
     }
 }
