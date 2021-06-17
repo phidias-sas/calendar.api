@@ -26,13 +26,8 @@ class Controller
         $startDate = '1000-01-01'; // 01-04-2021 00:00:00
         $endDate = '3000-12-31'; // 31-04-2021 00:00:00
 
-        // $startDate = '2021-05-30'; // 01-04-2021 00:00:00
-        // $endDate = '2021-07-13'; // 31-04-2021 00:00:00
-
-        $host = "http://127.0.0.1:8080/V4";
-        // return "$host/v3/calendar/google/$personId/feed?start=$startDate&end=$endDate";
-        // exit;
-        $host = "$_SERVER[HTTP_HOST]/V4";
+        // $host = "http://127.0.0.1:8080/V4";
+        $host = "$_SERVER[HTTP_HOST]";
 
         $output = Event::collection()
             ->allAttributes()
