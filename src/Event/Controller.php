@@ -25,11 +25,9 @@ class Controller
         $endDate = '3000-12-31'; // 31-04-2021 00:00:00
 
         $feeds = [];
-        // CONSUMO POR API
+
         if ( gettype( array_search("feed",$selectedFeeds) ) <> "boolean" ){
-            // array_push($feeds,self::getApi("$host/people/$personId/calendar/feed?start=$startDate&end=$endDate",$query->token)); 
             $output = $this->collection();
-            // var_dump($output);
             $output->attribute("postEvent", PostEvent::single()
                     ->notEmpty()
                     ->attribute("post", Post::single()
@@ -54,13 +52,12 @@ class Controller
             $allEvents = $output->find()->fetchAll();
             array_push($feeds,$allEvents);
         }
+
         if ( gettype( array_search("aula",$selectedFeeds) ) <> "boolean"  ){
-            // array_push($feeds,self::getApi("$host/1/communication/people/$personId/events?start=$startDate&end=$endDate",$query->token)); 
             $query->start=$startDate;
             $query->end  =$endDate;
             array_push($feeds, \Phidias\Core\Communication\Node\Post\Controller::getEvents($personId, $query) );
         }
-        // LLAMADO AL CONTROLLER
         if ( gettype( array_search("evGoogle",$selectedFeeds) ) <> "boolean" ){array_push($feeds, \Phidias\V3\Calendar\Google\Controller::googleEvents($personId,$startDate, $endDate));}
         if ( gettype( array_search("exams",$selectedFeeds) ) <> "boolean" ){array_push($feeds, \Phidias\V3\Academic\Exam\Controller::feed($personId, $startDate, $endDate) );}
         if ( gettype( array_search("assignments",$selectedFeeds) ) <> "boolean" ){array_push($feeds, \Phidias\V3\Academic\Assignment\Controller::feed($personId, $startDate, $endDate) );}
