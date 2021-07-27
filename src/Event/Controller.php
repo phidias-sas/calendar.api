@@ -51,6 +51,7 @@ class Controller
 
             $allEvents = $output->find()->fetchAll();
             array_push($feeds,$allEvents);
+            // array_push($feeds,[['nume' => 'Nitu', 'prenume' => 'Andrei'],['nume' => 'Nitu', 'prenume' => 'Andrei']]);
         }
 
         if ( gettype( array_search("aula",$selectedFeeds) ) <> "boolean"  ){
@@ -68,10 +69,12 @@ class Controller
         $events = [];
         foreach($feeds as $value){
             for($i=0;$i<count($value);$i++){
-                $events[] = $value[$i];
+                if(gettype($value[$i])=="array"){
+                    $value[$i] = (object)$value[$i];
+                }   
+                $events[] =  $value[$i] ;
             }
         }
-
         return $events;
     }
 
