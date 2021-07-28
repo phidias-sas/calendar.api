@@ -117,7 +117,7 @@ X-WR-CALDESC:Mis eventos en el colegio
 END:VCALENDAR";
     } 
 
-    public static function toIcsFromArray (Object $event){
+    public static function toIcsFromArray ($event){
         
         if($event->post->type->plural=="evGoogle"){
             $event->endDate = $event->endDate-86400;
