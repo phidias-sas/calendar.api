@@ -396,7 +396,7 @@ class Controller
                     ) {
 
                         $childEvent            = clone($event);
-                        $childEvent->startDate = mktime(date('h', $event->startDate), date('i', $event->startDate), date('s', $event->startDate), date('m', $date), date('d', $date), date('y', $date));
+                        $childEvent->startDate = mktime(date('H', $event->startDate), date('i', $event->startDate), date('s', $event->startDate), date('m', $date), date('d', $date), date('y', $date));
                         $childEvent->endDate   = $childEvent->startDate + ($event->endDate - $event->startDate);
                         unset($childEvent->occurrences);
                         unset($childEvent->repetition);
