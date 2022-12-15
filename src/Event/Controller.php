@@ -54,15 +54,18 @@ class Controller
             // array_push($feeds,[['nume' => 'Nitu', 'prenume' => 'Andrei'],['nume' => 'Nitu', 'prenume' => 'Andrei']]);
         }
 
-        if ( gettype( array_search("aula",$selectedFeeds) ) <> "boolean"  ){
-            $query->start=$startDate;
-            $query->end  =$endDate;
-            array_push($feeds, \Phidias\Core\Communication\Node\Post\Controller::getEvents($personId, $query) );
-        }
-        if ( gettype( array_search("evGoogle",$selectedFeeds) ) <> "boolean" ){array_push($feeds, \Phidias\V3\Calendar\Google\Controller::googleEvents($personId,$startDate, $endDate));}
-        if ( gettype( array_search("exams",$selectedFeeds) ) <> "boolean" ){array_push($feeds, \Phidias\V3\Academic\Exam\Controller::feed($personId, $startDate, $endDate) );}
-        if ( gettype( array_search("assignments",$selectedFeeds) ) <> "boolean" ){array_push($feeds, \Phidias\V3\Academic\Assignment\Controller::feed($personId, $startDate, $endDate) );}
-        if ( gettype( array_search("evaluations",$selectedFeeds) ) <> "boolean" ){array_push($feeds, \Phidias\V3\Academic\Evaluation\Controller::feed($personId, $startDate, $endDate) );}
+        
+        $query->start=$startDate;
+        $query->end  =$endDate;
+        array_push($feeds, \Phidias\Core\Communication\Node\Post\Controller::getEvents($personId, $query) );
+
+        array_push($feeds, \Phidias\V3\Calendar\Google\Controller::googleEvents($personId,$startDate, $endDate));
+
+        array_push($feeds, \Phidias\V3\Academic\Exam\Controller::feed($personId, $startDate, $endDate) );
+
+        array_push($feeds, \Phidias\V3\Academic\Assignment\Controller::feed($personId, $startDate, $endDate) );
+        
+        array_push($feeds, \Phidias\V3\Academic\Evaluation\Controller::feed($personId, $startDate, $endDate) );
 
         // return $feeds;
 
