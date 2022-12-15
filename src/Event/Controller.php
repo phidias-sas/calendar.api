@@ -20,15 +20,14 @@ class Controller
 
     public function getEvents($personId,$query)
     {
-        $selectedFeeds = explode(",",$query->feeds);
+        //$selectedFeeds = explode(",",$query->feeds);
         $startDate = '1000-01-01'; // 01-04-2021 00:00:00
         $endDate = '3000-12-31'; // 31-04-2021 00:00:00
 
         $feeds = [];
 
-        if ( gettype( array_search("feed",$selectedFeeds) ) <> "boolean" ){
-            $output = $this->collection();
-            $output->attribute("postEvent", PostEvent::single()
+        $output = $this->collection();
+           $output->attribute("postEvent", PostEvent::single()
                     ->notEmpty()
                     ->attribute("post", Post::single()
                         ->notEmpty()
@@ -52,11 +51,12 @@ class Controller
             $allEvents = $output->find()->fetchAll();
             array_push($feeds,$allEvents);
             // array_push($feeds,[['nume' => 'Nitu', 'prenume' => 'Andrei'],['nume' => 'Nitu', 'prenume' => 'Andrei']]);
-        }
+        
 
         
         $query->start=$startDate;
         $query->end  =$endDate;
+
         array_push($feeds, \Phidias\Core\Communication\Node\Post\Controller::getEvents($personId, $query) );
 
         array_push($feeds, \Phidias\V3\Calendar\Google\Controller::googleEvents($personId,$startDate, $endDate));
