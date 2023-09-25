@@ -2,6 +2,7 @@
 namespace Phidias\Calendar\Event\Repetition;
 
 use DateTime;
+use DateTimeZone;
 use Phidias\Calendar\Event\Entity as Event;
 use Phidias\Calendar\Event\Repetition\Entity as Repetition;
 
@@ -98,9 +99,9 @@ class Controller
     private static function daysSinceEpoch($date)
     {
         $date = mktime(0, 0, 0, date("m", $date), date("d", $date), date("Y", $date));
-
+        $utc_timezone = new DateTimeZone("UTC");
         $current = new DateTime('@'.$date);
-        $epoch   = new DateTime('1970-01-01');
+        $epoch   = new DateTime('1970-01-01',$utc_timezone);
         $diff    = $current->diff($epoch);
         return (int)$diff->format('%a');
     }
