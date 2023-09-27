@@ -100,7 +100,7 @@ class Controller
     {
         $date = mktime(0, 0, 0, date("m", $date), date("d", $date), date("Y", $date));
         $utc_timezone = new DateTimeZone("UTC");
-        $current = new DateTime('@'.$date,$utc_timezone);
+        $current = new DateTime('@'.$date);
         $epoch   = new DateTime('1970-01-01',$utc_timezone);
         $diff    = $current->diff($epoch);
         return (int)$diff->format('%a');
